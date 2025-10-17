@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Web3 钱包安全排行榜 | 安全事件公开透明</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f7f9fc;
+      color: #2d3748;
+      line-height: 1.7;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      text-align: center;
+      padding: 60px 20px 30px;
+      background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%);
+      color: white;
+      border-bottom-left-radius: 30px;
+      border-bottom-right-radius: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    }
+
+    header h1 {
+      font-size: 2.8em;
+      font-weight: 700;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    header p {
+      font-size: 1.1em;
+      opacity: 0.95;
+      margin-top: 10px;
+    }
+
+    /* 筛选按钮 */
+    .filters {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin: 20px 0 30px;
+      flex-wrap: wrap;
+    }
+
+    .filters button {
+      background: #e2e8f0;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      color: #4a5568;
+    }
+
+    .filters button:hover,
+    .filters button.active {
+      background: #4c1d95;
+      color: white;
+    }
+
+    /* 钱包网格 */
+    .wallet-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 26px;
+    }
+
+    .wallet-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .wallet-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.13);
+    }
+
+    .card-header {
+      padding: 28px 20px 20px;
+      text-align: center;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .card-header img {
+      width: 70px;
+      height: 70px;
+      object-fit: contain;
+      margin-bottom: 12px;
+    }
+
+    .card-header h3 {
+      font-size: 1.4em;
+      color: #1a202c;
+      font-weight: 600;
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 11px;
+      font-size: 14px;
+      color: #4a5568;
+    }
+
+    .rating {
+      color: #d97706;
+      font-weight: bold;
+    }
+
+    .chains {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .chain-tag {
+      background: #dbeafe;
+      color: #1e40af;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 500;
+    }
+
+    /* 安全事件区域 */
+    .security-alerts {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px dashed #e2e8f0;
+      font-size: 13px;
+    }
+
+    .security-alerts h4 {
+      color: #c8412b;
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    .security-event {
+      color: #718096;
+      margin-bottom: 4px;
+      padding-left: 6px;
+      font-style: italic;
+    }
+
+    .security-ok {
+      color: #059669;
+      font-style: normal;
+    }
+
+    .card-footer {
+      padding: 16px;
+      text-align: center;
+      background: #f1f5f9;
+    }
+
+    .card-footer a {
+      display: inline-block;
+      background: #7c3aed;
+      color: white;
+      padding: 10px 24px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.3s ease;
+    }
+
+    .card-footer a:hover {
+      background: #6d28d9;
+    }
+
+    footer {
+      text-align: center;
+      padding: 50px 20px 30px;
+      margin-top: 50px;
+      color: #718096;
+      font-size: 14px;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2.2em;
+      }
+      .wallet-grid {
+        grid-template-columns: 1fr;
+        padding: 0 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 头部 -->
+  <header>
+    <h1>🛡️ Web3 钱包安全排行榜</h1>
+    <p>基于安全性、用户体验与历史事件的透明排名</p>
+  </header>
+
+  <div class="container">
+    <!-- 分类筛选 -->
+    <div class="filters">
+      <button class="active" data-filter="all">全部</button>
+      <button data-filter="ethereum">Ethereum</button>
+      <button data-filter="solana">Solana</button>
+      <button data-filter="multi-chain">多链钱包</button>
+      <button data-filter="hardware">硬件钱包</button>
+    </div>
+
+    <!-- 钱包列表 -->
+    <div class="wallet-grid" id="walletGrid">
+
+      <!-- MetaMask -->
+      <div class="wallet-card" data-chains="ethereum multi-chain">
+        <div class="card-header">
+          <image src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask" />
+          <h3>MetaMask</h3>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <span>评分</span>
+            <span class="rating">⭐ 4.8</span>
+          </div>
+          <div class="info-row">
+            <span>类型</span>
+            <span>插件 / 移动端</span>
+          </div>
+          <div class="info-row">
+            <span>支持链</span>
+            <div class="chains">
+              <span class="chain-tag">ETH</span>
+              <span class="chain-tag">BSC</span>
+              <span class="chain-tag">Polygon</span>
+            </div>
+          </div>
+
+          <!-- 安全事件 -->
+          <div class="security-alerts">
+            <h4>⚠️ 安全事件</h4>
+            <div class="security-event">2023年：钓鱼插件仿冒事件（非官方）</div>
+            <div class="security-event">2022年：短信助记词诈骗提醒</div>
+            <div class="security-ok">✅ 官方无重大漏洞或资产丢失</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <a href="https://metamask.io" target="_blank">官网</a>
+        </div>
+      </div>
+
+      <!-- Trust Wallet -->
+      <div class="wallet-card" data-chains="multi-chain">
+        <div class="card-header">
+          <image src="https://trustwallet.com/assets/images/trust-web-b4416765.webp" alt="Trust Wallet" />
+          <h3>Trust Wallet</h3>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <span>评分</span>
+            <span class="rating">⭐ 4.7</span>
+          </div>
+          <div class="info-row">
+            <span>类型</span>
+            <span>移动端</span>
+          </div>
+          <div class="info-row">
+            <span>支持链</span>
+            <div class="chains">
+              <span class="chain-tag">BNB</span>
+              <span class="chain-tag">ETH</span>
+              <span class="chain-tag">SOL</span>
+            </div>
+          </div>
+
+          <div class="security-alerts">
+            <h4>⚠️ 安全事件</h4>
+            <div class="security-event">2022年：创始人被曝内幕交易争议</div>
+            <div class="security-event">2021年：部分用户遭遇钓鱼攻击</div>
+            <div class="security-ok">✅ 钱包本身未发生代码级漏洞</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <a href="https://trustwallet.com" target="_blank">官网</a>
+        </div>
+      </div>
+
+      <!-- Ledger -->
+      <div class="wallet-card" data-chains="hardware ethereum multi-chain">
+        <div class="card-header">
+          <image src="https://www.ledger.com/hubfs/Logos/Ledger_logo_%20horizontal_Black%20Text.svg" alt="Ledger" />
+          <h3>Ledger</h3>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <span>评分</span>
+            <span class="rating">⭐ 4.9</span>
+          </div>
+          <div class="info-row">
+            <span>类型</span>
+            <span>硬件钱包</span>
+          </div>
+          <div class="info-row">
+            <span>支持链</span>
+            <div class="chains">
+              <span class="chain-tag">BTC</span>
+              <span class="chain-tag">ETH</span>
+              <span class="chain-tag">DOT</span>
+            </div>
+          </div>
+
+          <div class="security-alerts">
+            <h4>⚠️ 安全事件</h4>
+            <div class="security-event">2020年：用户数据泄露（非私钥）</div>
+            <div class="security-event">2023年：包装固件争议引发社区质疑</div>
+            <div class="security-ok">✅ 硬件设备未发生私钥破解事件</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <a href="https://www.ledger.com" target="_blank">官网</a>
+        </div>
+      </div>
+
+      <!-- Phantom -->
+      <div class="wallet-card" data-chains="solana">
+        <div class="card-header">
+          <image src="https://phantom.app/img/logo.svg" alt="Phantom" />
+          <h3>Phantom</h3>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <span>评分</span>
+            <span class="rating">⭐ 4.6</span>
+          </div>
+          <div class="info-row">
+            <span>类型</span>
+            <span>插件 / 移动端</span>
+          </div>
+          <div class="info-row">
+            <span>支持链</span>
+            <div class="chains">
+              <span class="chain-tag">SOL</span>
+              <span class="chain-tag">ETH</span>
+            </div>
+          </div>
+
+          <div class="security-alerts">
+            <h4>⚠️ 安全事件</h4>
+            <div class="security-event">2022年：部分用户资产被转移（钓鱼）</div>
+            <div class="security-ok">✅ 无平台级漏洞或后门报告</div>
+            <div class="security-ok">✅ 源码部分开源，审计较透明</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <a href="https://phantom.app" target="_blank">官网</a>
+        </div>
+      </div>
+
+      <!-- Rainbow -->
+      <div class="wallet-card" data-chains="ethereum multi-chain">
+        <div class="card-header">
+          <image src="https://rainbow.me/images/rainbow-logo.svg" alt="Rainbow" />
+          <h3>Rainbow</h3>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <span>评分</span>
+            <span class="rating">⭐ 4.7</span>
+          </div>
+          <div class="info-row">
+            <span>类型</span>
+            <span>移动端</span>
+          </div>
+          <div class="info-row">
+            <span>支持链</span>
+            <div class="chains">
+              <span class="chain-tag">ETH</span>
+              <span class="chain-tag">Optimism</span>
+              <span class="chain-tag">Base</span>
+            </div>
+          </div>
+
+          <div class="security-alerts">
+            <h4>✅ 安全记录</h4>
+            <div class="security-ok">✅ 开源代码，GitHub 可查</div>
+            <div class="security-ok">✅ 多次第三方安全审计</div>
+            <div class="security-ok">✅ 无用户资产丢失报告</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <a href="https://rainbow.me" target="_blank">官网</a>
+        </div>
+      </div>
+
+      <!-- SafePal -->
+      <div class="wallet-card" data-chains="multi-chain hardware">
+        <div class="card-header">
+          <image src="https://www.safepal.com/static/images/logo.svg" alt="SafePal" />
+          <h3>SafePal</h3>
+        </div>
+        <div class="card-body">
+          <div class="info-row">
+            <span>评分</span>
+            <span class="rating">⭐ 4.5</span>
+          </div>
+          <div class="info-row">
+            <span>类型</span>
+            <span>硬件 / App</span>
+          </div>
+          <div class="info-row">
+            <span>支持链</span>
+            <div class="chains">
+              <span class="chain-tag">BTC</span>
+              <span class="chain-tag">ETH</span>
+              <span class="chain-tag">BSC</span>
+            </div>
+          </div>
+
+          <div class="security-alerts">
+            <h4>⚠️ 安全事件</h4>
+            <div class="security-event">2022年：App 被曝收集用户设备信息</div>
+            <div class="security-event">2021年：固件更新机制被质疑</div>
+            <div class="security-ok">✅ 无私钥泄露或资产被窃事件</div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <a href="https://www.safepal.com" target="_blank">官网</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 页脚 -->
+  <footer>
+    <p>数据更新至 2025 年 4 月 | 所有安全事件均来自公开报道与社区反馈</p>
+    <p style="margin-top: 8px;">
+      <strong>提示：</strong>选择钱包时，请优先考虑开源、审计透明、无重大漏洞的产品。
+    </p>
+    <p style="margin-top: 12px; font-size: 13px;">
+      本页面为静态展示，欢迎 Fork 或部署到 GitHub Pages / Vercel
+    </p>
+  </footer>
+
+  <!-- 筛选功能 -->
+  <script>
+    document.querySelectorAll('.filters button').forEach(button => {
+      button.addEventListener('click', function () {
+        // 更新按钮状态
+        document.querySelectorAll('.filters button').forEach(btn => 
+          btn.classList.remove('active'));
+        this.classList.add('active');
+
+        const filter = this.getAttribute('data-filter');
+        const cards = document.querySelectorAll('.wallet-card');
+
+        cards.forEach(card => {
+          const chains = card.getAttribute('data-chains');
+          if (filter === 'all' || chains.includes(filter)) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
